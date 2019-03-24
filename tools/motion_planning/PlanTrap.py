@@ -82,24 +82,26 @@ def PlanTrap(Xf, Xi, Vi, Vmax, Amax, Dmax):
 
     Tf = Ta+Tv+Td
 
+    # We only know acceleration (Ar and Dr), so we integrate to create
+    # the velocity and position curves
+    y_Accel = Xi + Vi*Ta + 0.5*Ar*Ta**2
+
     print("Xi: {:.2f}\tXf: {:.2f}\tVi: {:.2f}".format(Xi, Xf, Vi))
     print("Amax: {:.2f}\tVmax: {:.2f}\tDmax: {:.2f}".format(Amax, Vmax, Dmax))
     print("dX: {:.2f}\tdXst: {:.2f}\tdXmin: {:.2f}".format(dX, dXstop, dXmin))
     print("Ar: {:.2f}\tVr: {:.2f}\tDr: {:.2f}".format(Ar, Vr, Dr))
     print("Ta: {:.2f}\tTv: {:.2f}\tTd: {:.2f}".format(Ta, Tv, Td))
 
-    return (Ar, Vr, Dr, Ta, Tv, Td, Tf)
+    return (Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel)
 
-def EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf):
+def EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel):
     # Create the time series and preallocate the position, velocity, and acceleration arrays
     t_traj = np.arange(0, Tf+0.1, 1/10000)
     y = [None]*len(t_traj)
     yd = [None]*len(t_traj)
     ydd = [None]*len(t_traj)
 
-    # We only know acceleration (Ar and Dr), so we integrate to create
-    # the velocity and position curves
-    y_Accel = Xi + Vi*Ta + 0.5*Ar*Ta**2
+
 
     for i in range(len(t_traj)):
         t = t_traj[i]
@@ -178,8 +180,8 @@ def graphical_test():
         else:
             Vi = 0
 
-        (Ar, Vr, Dr, Ta, Tv, Td, Tf) = PlanTrap(Xf, Xi, Vi, Vmax, Amax, Dmax)
-        (Y, Yd, Ydd, t) = EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf)
+        (Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel) = PlanTrap(Xf, Xi, Vi, Vmax, Amax, Dmax)
+        (Y, Yd, Ydd, t) = EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel)
 
         # Plotting
         ax1 = axes[rownow, colnow]
@@ -215,8 +217,8 @@ def large_test():
         else:
             Vi = 0
 
-        (Ar, Vr, Dr, Ta, Tv, Td, Tf) = PlanTrap(Xf, Xi, Vi, Vmax, Amax, Dmax)
-        (Y, Yd, Ydd, t) = EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf)
+        (Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel) = PlanTrap(Xf, Xi, Vi, Vmax, Amax, Dmax)
+        (Y, Yd, Ydd, t) = EvalTrap(Xf, Xi, Vi, Ar, Vr, Dr, Ta, Tv, Td, Tf, y_Accel)
 
         print()
 
