@@ -168,7 +168,7 @@ public:
             if (!checks_ok || !updates_ok || !watchdog_ok) {
                 // It's not useful to quit idle since that is the safe action
                 // Also leaving idle would rearm the motors
-                if (current_state_ != AXIS_STATE_IDLE)
+                if (current_state_ != AXIS_STATE_IDLE && current_state_ != AXIS_STATE_STARTUP_SEQUENCE)
                     break;
             }
 
