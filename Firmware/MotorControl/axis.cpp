@@ -322,6 +322,26 @@ bool Axis::run_idle_loop() {
     return check_for_errors();
 }
 
+bool Axis::initialize_components(){
+
+    safety_critical_disarm_motor_pwm(motor_);
+    run_control_loop([this]() {
+        bool waiting = false;
+        switch(encoder_.config_.mode){
+            case Encoder::MODE_INCREMENTAL: break;; // No waiting
+            case Encoder::MODE_HALL:    break;
+            case Encoder::MODE_SINCOS:  break;
+            case Encoder::MODE_SPI_ABS_AMS:
+            case Encoder::MODE_SPI_ABS_CUI:
+                waiting = !(encoder_.abs_spi_pos_init_once_);
+            default:
+                break;
+        }
+        return waiting;
+    });
+    return check_for_errors();
+}
+
 // Infinite loop that does calibration and enters main control loop as appropriate
 void Axis::run_state_machine_loop() {
 
@@ -333,6 +353,7 @@ void Axis::run_state_machine_loop() {
         if (requested_state_ != AXIS_STATE_UNDEFINED) {
             size_t pos = 0;
             if (requested_state_ == AXIS_STATE_STARTUP_SEQUENCE) {
+                task_chain_[pos++] = AXIS_STATE_STARTUP_SEQUENCE;
                 if (config_.startup_motor_calibration)
                     task_chain_[pos++] = AXIS_STATE_MOTOR_CALIBRATION;
                 if (config_.startup_encoder_index_search && encoder_.config_.use_index)
@@ -373,6 +394,11 @@ void Axis::run_state_machine_loop() {
         // Handlers should exit if requested_state != AXIS_STATE_UNDEFINED
         bool status;
         switch (current_state_) {
+            
+            case AXIS_STATE_STARTUP_SEQUENCE: {
+                status = initialize_components();
+            } break;
+
             case AXIS_STATE_MOTOR_CALIBRATION: {
                 status = motor_.run_calibration();
             } break;
