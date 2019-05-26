@@ -324,7 +324,6 @@ bool Axis::run_idle_loop() {
 
 bool Axis::initialize_components(){
 
-    safety_critical_disarm_motor_pwm(motor_);
     run_control_loop([this]() {
         bool waiting = false;
         switch(encoder_.config_.mode){
