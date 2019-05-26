@@ -322,14 +322,13 @@ bool Axis::run_idle_loop() {
     return check_for_errors();
 }
 
-bool Axis::initialize_components(){
-
+bool Axis::initialize_components() {
     run_control_loop([this]() {
         bool waiting = false;
-        switch(encoder_.config_.mode){
-            case Encoder::MODE_INCREMENTAL: break;; // No waiting
-            case Encoder::MODE_HALL:    break;
-            case Encoder::MODE_SINCOS:  break;
+        switch (encoder_.config_.mode) {
+            case Encoder::MODE_INCREMENTAL: break;  // No waiting
+            case Encoder::MODE_HALL: break;
+            case Encoder::MODE_SINCOS: break;
             case Encoder::MODE_SPI_ABS_AMS:
             case Encoder::MODE_SPI_ABS_CUI:
                 waiting = !(encoder_.abs_spi_is_initialized);
@@ -338,7 +337,7 @@ bool Axis::initialize_components(){
         }
         return waiting;
     });
-    return check_for_errors();
+    return true;
 }
 
 // Infinite loop that does calibration and enters main control loop as appropriate
