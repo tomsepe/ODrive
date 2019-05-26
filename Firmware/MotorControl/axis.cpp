@@ -333,7 +333,7 @@ bool Axis::initialize_components(){
             case Encoder::MODE_SINCOS:  break;
             case Encoder::MODE_SPI_ABS_AMS:
             case Encoder::MODE_SPI_ABS_CUI:
-                waiting = !(encoder_.abs_spi_pos_init_once_);
+                waiting = !(encoder_.abs_spi_is_initialized);
             default:
                 break;
         }

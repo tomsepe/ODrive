@@ -107,7 +107,7 @@ public:
     uint16_t abs_spi_dma_tx_[2] = {0xFFFF, 0x0000};
     uint16_t abs_spi_dma_rx_[2];
     bool abs_spi_pos_updated_ = false;
-    bool abs_spi_pos_init_once_ = false;
+    bool abs_spi_is_initialized = false;
     GPIO_TypeDef* abs_spi_cs_port_;
     uint16_t abs_spi_cs_pin_;
     uint32_t abs_spi_cr1;

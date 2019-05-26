@@ -442,7 +442,7 @@ bool Encoder::update() {
         
         case MODE_SPI_ABS_AMS:
         case MODE_SPI_ABS_CUI:{
-            if(abs_spi_pos_updated_ == false && abs_spi_pos_init_once_){
+            if(abs_spi_pos_updated_ == false && abs_spi_is_initialized){
                 // Low pass filter the error
                 spi_error_rate_ += current_meas_period * (1.0f - spi_error_rate_);
                 // if (spi_error_rate_ > 0.005f)
@@ -451,15 +451,15 @@ bool Encoder::update() {
             else
                 // Low pass filter the error
                 spi_error_rate_ += current_meas_period * (0.0f - spi_error_rate_);
-
-            abs_spi_pos_updated_ = false;
+            
             delta_enc = pos_abs_ - count_in_cpr_;
             delta_enc = mod(delta_enc, config_.cpr);
             if (delta_enc > config_.cpr/2)
                 delta_enc -= config_.cpr;
-            if(!abs_spi_pos_init_once_ && delta_enc != 0){
-                abs_spi_pos_init_once_ = true;
+            if(!abs_spi_is_initialized && abs_spi_pos_updated_){
+                abs_spi_is_initialized = true;
             }
+            abs_spi_pos_updated_ = false;
 
         }break;
         default: {
